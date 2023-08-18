@@ -1,0 +1,37 @@
+#!/bin/bash
+
+declare -A FONT_COLORS=(
+  [1]="\e[97m"
+  [2]="\e[31m"
+  [3]="\e[32m"
+  [4]="\e[34m"
+  [5]="\e[35m"
+  [6]="\e[30m"
+)
+
+declare -A BACK_COLORS=(
+  [1]="\e[107m"
+  [2]="\e[41m"
+  [3]="\e[42m"
+  [4]="\e[44m"
+  [5]="\e[45m"
+  [6]="\e[40m"
+)
+
+ENDCOLOR="\e[0m"
+
+function set_color_font {
+  if [[ -n $1 ]]; then
+    result="${FONT_COLORS[$1]}"
+  fi
+}
+
+function set_color_background {
+  if [[ -n $1 ]]; then
+    result_2="${BACK_COLORS[$1]}"
+  fi
+}
+
+function clear_color {
+  result_clear="${ENDCOLOR}"
+}

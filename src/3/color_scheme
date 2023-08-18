@@ -1,0 +1,30 @@
+
+function color_scheme {
+
+	echo ""
+
+	if [[ flag1 -eq 1 ]]; then
+		echo "Column 1 background = default (black)"
+	else
+		echo "Column 1 background = $color_1 ${colors_array[$color_1-1]}"
+	fi
+
+	if [[ flag2 -eq 1 ]]; then
+		echo "Column 1 font color = default (white)"
+	else
+		echo "Column 1 font color = $color_2 ${colors_array[$color_2-1]}"
+	fi
+
+	if [[ flag3 -eq 1 ]]; then
+		echo "Column 2 background = default (black)"
+	else
+		echo "Column 2 background = $color_3 ${colors_array[$color_3-1]}"
+	fi
+
+	if [[ flag4 -eq 1 ]]; then
+		echo "Column 2 font color = default (white)"
+	else
+		echo "Column 2 font color = $color_4 ${colors_array[$color_4-1]}"
+	fi
+
+}

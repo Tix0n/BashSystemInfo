@@ -1,0 +1,94 @@
+#!/bin/bash
+
+function total_number_of_folders_ {
+	echo "Total number of folders (including all nested ones) = $(ls -lR $1 2> /dev/null | grep "^d" 2> /dev/null | wc -l)"
+}
+
+function top_5_folders_weight_ {
+	echo "TOP 5 folders of maximum size arranged in descending order (path and size):"
+	echo "$(du -Sh $1 2> /dev/null | sort -rh | head -n 5 | cat -n 2> /dev/null | sed -r 's_^ *__g' | awk '{a=$2; $2=$3; $3=a} 1' 2> /dev/null | sed 's_ _, _g' | sed 's_,_ -_')"
+}
+
+function total_number_of_files_ {
+	echo "Total number of files = $(find $1 -type f 2> /dev/null | wc -l)"
+}
+
+function number_of_conf_files_ {
+	echo "Configuration files (with the .conf extension) = $(find $1 -type f -name "*.conf" 2> /dev/null | wc -l)"
+}
+
+function number_of_text_files_ {
+	echo "Text files = $(file --mime-type $(find $1 -type f 2> /dev/null) 2> /dev/null | grep -s 'text/*' 2> /dev/null | wc -l )"
+}
+
+function number_of_executable_files_ {
+	tmp=$(find $1 -perm -u+x -type f 2> /dev/null | wc -l)
+	find $1 -perm -u+x -type f 2> /dev/null >> tmp.txt
+	echo "Executable files = $tmp"
+	rm tmp.txt
+}
+
+function number_of_logs_ {
+	echo "Log files (with the extension .log) = $(find $1 -type f -name "*.log" 2> /dev/null | wc -l)"
+}
+
+function number_of_archives_ {
+	echo "Archive files = $(file --mime-type $(find $1 -type f 2> /dev/null) 2> /dev/null | grep -E 'application/x*|application/rar*|application/zip*|application/xz*|application/lzma*|application/bz2*|application/cpio*|application/shar*' 2> /dev/null | wc -l)"
+}
+
+function number_of_symbolic_links_ {
+	echo "Symbolic links = $(file --mime-type $(find $1 2> /dev/null) 2> /dev/null | grep 'symlink*' 2> /dev/null | wc -l)"
+}
+
+function top_10_files_weight_ {
+	echo "TOP 10 files of maximum size arranged in descending order (path, size and type):"
+	
+	for i in {1..10}; do
+		str=$(find $1 -type f -exec du -Sh {} + 2> /dev/null | sort -rh | sed -n ''$i'p' | sed 's_^_'$i' _' | sed -r 's_^ *__g' | awk '{a=$2; $2=$3; $3=a} 1' 2> /dev/null | sed 's_ _, _g' | sed 's_,_ -_' )	
+		str_extension=$(find $1 -type f -exec du -Sh {} + 2> /dev/null | sort -rh | sed -n ''$i'p' | awk '{print $2}' 2> /dev/null)
+		echo ${str_extension} > tmp.txt
+		num=$(cat tmp.txt 2> /dev/null | tr -cd '/' | wc -m)
+		num=$(($num+1))
+		dot=$(find $1 -type f -exec du -Sh {} + 2> /dev/null | sort -rh | sed -n ''$i'p' | cut -d/ -f$num 2> /dev/null | grep -c '\.' 2> /dev/null)
+		
+		if [ -z "${str}" ]; then
+			echo "-"
+			break
+		fi
+
+		if [[ "$dot" != "0" ]]; then
+			str_extension=$(find $1 -type f -exec du -Sh {} + 2> /dev/null | sort -rh | sed -n ''$i'p' | cut -d/ -f$num 2> /dev/null | cut -d. -f2 2> /dev/null)
+			echo "${str}, ${str_extension}"
+		else
+			echo "${str}"
+		fi
+
+	done
+	rm tmp.txt
+
+}
+
+function top_10_executable_files_weight_ {
+
+	echo "TOP 10 executable files of the maximum size arranged in descending order (path, size and MD5 hash of file)"
+
+	for i in {1..10}; do
+
+		str=$(find $1 -perm -u+x -type f -exec du -Sh {} + 2> /dev/null | sort -rh | sed -n ''$i'p' | sed 's_^_'$i' _' | sed -r 's_^ *__g' | awk '{a=$2; $2=$3; $3=a} 1' 2> /dev/null | sed 's_ _, _g' | sed 's_,_ -_' )
+		if [ -z "${str}" ]; then
+			echo "-"
+			break
+		fi
+		
+		name_file=$(find $1 -perm -u+x -type f -exec du -Sh {} + 2> /dev/null | sort -rh | sed -n ''$i'p' | awk '{print $2}' 2> /dev/null)
+		md5=$(md5sum $name_file 2> /dev/null | awk '{print $1}' 2> /dev/null)
+
+		if [ -z "${md5}" ]; then
+			echo "${str}"
+		else 
+			echo "${str}, ${md5}"
+		fi
+
+	done
+
+}

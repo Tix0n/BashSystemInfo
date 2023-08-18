@@ -1,0 +1,20 @@
+#!bin/bash
+
+function run_all_functions_ {
+	echo "HOSTNAME = $(hostname_)"
+	echo "TIMEZONE = $(timezone_)"
+	echo "USER = $(user_)"
+	echo "OS = $(os_)"
+	echo "DATE = $(date_)"
+	echo "UPTIME = $(uptime_)"
+	echo "UPTIME_SEC = $(uptime_sec_)"
+	echo "IP = $(ip_)"
+	echo "MASK = $(mask_)"
+	echo "GATEWAY = $(gateway_)"
+	echo "RAM_TOTAL = $(ram_total_)"
+	echo "RAM_USED = $(ram_used_)"
+	echo "RAM_FREE = $(ram_free_)"
+	echo "SPACE_ROOT = $(space_root_)"
+	echo "SPACE_ROOT_USED = $(space_root_used_)"
+	echo "SPACE_ROOT_FREE = $(space_root_free_)"
+}

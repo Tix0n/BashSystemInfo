@@ -1,0 +1,37 @@
+
+function input_analysis {
+
+	tmp1=$(grep "^column1_background=[0-9]$" file.conf | awk 'NR == 1')
+	tmp2=$(grep "^column1_font_color=[0-9]$" file.conf | awk 'NR == 1')
+	tmp3=$(grep "^column2_background=[0-9]$" file.conf | awk 'NR == 1') 
+	tmp4=$(grep "^column2_font_color=[0-9]$" file.conf | awk 'NR == 1')
+
+	if [ "$tmp1" != "" ]; then
+		color_1="${tmp1: -1}"
+	else
+		flag1=1
+		color_1=6
+	fi
+
+	if [ "$tmp2" != "" ]; then
+		color_2="${tmp2: -1}"
+	else
+		flag2=1
+		color_2=1
+	fi
+
+	if [ "$tmp3" != "" ]; then
+		color_3="${tmp3: -1}"
+	else
+		flag3=1
+		color_3=6
+	fi
+
+	if [ "$tmp4" != "" ]; then
+		color_4="${tmp4: -1}"
+	else
+		flag4=1
+		color_4=1
+	fi
+
+}

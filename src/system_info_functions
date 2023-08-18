@@ -1,0 +1,107 @@
+#!bin/bash
+
+function hostname_ { 
+	hostname
+}
+
+function timezone_ { 
+	place=$(timedatectl | grep "Time zone" | awk '{print $3}')
+	sign_num=$(timedatectl | grep "Time zone" | awk '{print $5}' | head --bytes -4)
+	num=$(timedatectl | grep "Time zone" | sed 's_)__' | awk '{print $5}')
+	echo "$place UTC $sign_num:${num: -2}"
+}
+
+function user_ {
+	echo $USER
+}
+
+function os_ {
+	cat /etc/issue | awk 'NR == 1 {print $1,$2,$3}'
+}
+
+function date_ {
+	date +"%d %B %Y %T"
+}
+
+function uptime_ {
+	uptime -p
+}
+
+function uptime_sec_ {
+	awk '{print $1}' /proc/uptime
+}
+
+function ip_ {
+	ip a | grep 'inet' | awk 'NR == 1{print $2}'
+}
+
+function mask_ {
+	/sbin/ifconfig | grep 'netmask' | awk 'NR == 1{print $4}'
+}
+
+function gateway_ {
+	ip -4 route show default | awk '{print $3}'
+}
+
+function ram_total_ {
+	result_command=$(free --mega | awk 'NR == 2{print $2}')
+	result=$(bc<<<"scale=3;$result_command/1024")
+	
+	if [ $(echo " $result < 1 " | bc -l ) -eq 1 ]; then
+		echo "0$result GB"
+	else
+		echo "$result GB"
+	fi
+}
+
+function ram_used_ {
+	result_command=$(free --mega | awk 'NR == 2{print $3}')
+	result=$(bc<<<"scale=3;$result_command/1024")
+	
+	if [ $(echo "$result < 1" | bc -l ) -eq 1 ]; then
+		echo "0$result GB"
+	else
+		echo "$result GB"
+	fi
+}
+
+function ram_free_ {
+	result_command=$(free --mega | awk 'NR == 2{print $4}')
+	result=$(bc<<<"scale=3;$result_command/1024")
+	
+	if [ $(echo " $result < 1.0 " | bc -l ) -eq 1 ]; then
+		echo "0$result GB"
+	else
+		echo "$result GB"
+	fi
+}
+
+function space_root_ {
+	result_command=$(df | grep '/$' | awk '{print $2}')
+	result=$(bc<<<"scale=2;$result_command/1024")
+	if [ $(echo "$result < 1" | bc -l ) -eq 1 ]; then
+		echo "0$result Mb"
+	else
+		echo "$result Mb"
+	fi
+}
+
+function space_root_used_ {
+	result_command=$(df | grep '/$' | awk '{print $3}')
+	result=$(bc<<<"scale=2;$result_command/1024")
+	if [ $(echo "$result < 1" | bc -l ) -eq 1 ]; then
+		echo "0$result Mb"
+	else
+		echo "$result Mb"
+	fi
+}
+
+function space_root_free_ {
+	result_command=$(df | grep '/$' | awk '{print $4}')
+	result=$(bc<<<"scale=2;$result_command/1024")
+	if [ $(echo "$result < 1" | bc -l ) -eq 1 ]; then
+		echo "0$result Mb"
+	else
+		echo "$result Mb"
+	fi
+}
